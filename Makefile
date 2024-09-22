@@ -4,8 +4,17 @@
 BUILD_DIR=./bin
 BINARY_PATH=${BUILD_DIR}/server
 SERVER_PATH=./cmd/server/main.go
+MIGRATION_TOOL_PATH=./cmd/database/main.go
 
 .PHONY: run build clean lint
+
+migrateDB:
+	@echo "Migrating database..."
+	@GO_ENV=development go run ${MIGRATION_TOOL_PATH} migrateDB
+
+rollbackDB:
+	@echo "Rolling back database..."
+	@GO_ENV=development go run ${MIGRATION_TOOL_PATH} rollbackDB
 
 run:
 	@echo "Running server in development mode..."
