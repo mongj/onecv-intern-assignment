@@ -23,7 +23,7 @@ func setupRoutes(r chi.Router) {
 
 func getAPIRoutes() func(r chi.Router) {
 	return func(r chi.Router) {
-		r.Get("/applicants", applicants.HandleList)
+		r.Get("/applicants", api.HTTPHandler(applicants.HandleList))
 		r.Post("/applicants", api.HTTPHandler(applicants.HandleCreate))
 		r.Get("/schemes", schemes.HandleList)
 		r.Get("/schemes/eligible", schemes.HandleFind)

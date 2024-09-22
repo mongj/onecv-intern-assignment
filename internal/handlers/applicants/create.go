@@ -12,18 +12,18 @@ import (
 	"github.com/pkg/errors"
 )
 
-const handlerName = "applicants::create"
+const createHandlerName = "applicants::create"
 
 func HandleCreate(w http.ResponseWriter, r *http.Request) ([]byte, int, error) {
 	db, err := middleware.GetDB(r)
 	if err != nil {
-		return nil, http.StatusInternalServerError, errors.Wrap(err, fmt.Sprintf(handlers.ErrGetDB, handlerName))
+		return nil, http.StatusInternalServerError, errors.Wrap(err, fmt.Sprintf(handlers.ErrGetDB, createHandlerName))
 	}
 
 	var params params.ApplicantParams
 	err = json.DecodeParams(r.Body, &params)
 	if err != nil {
-		return nil, http.StatusInternalServerError, errors.Wrap(err, fmt.Sprintf(handlers.ErrDecodeParams, handlerName))
+		return nil, http.StatusInternalServerError, errors.Wrap(err, fmt.Sprintf(handlers.ErrDecodeParams, createHandlerName))
 	}
 	applicant, relatives := params.ToModel()
 	if err = applicants.Create(db, applicant, relatives); err != nil {
