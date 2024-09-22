@@ -1,11 +1,12 @@
 package router
 
 import (
-	"net/http"
 	"time"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+	"github.com/mongj/gds-onecv-swe-assignment/internal/handlers/applicants"
+	"github.com/mongj/gds-onecv-swe-assignment/internal/handlers/schemes"
 	"gorm.io/gorm"
 )
 
@@ -19,10 +20,18 @@ func Setup(db *gorm.DB) chi.Router {
 }
 
 func setupRoutes(r chi.Router) {
-	// Add routes here
-	r.Get("/api", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("hello"))
-	})
+	r.Route("/api", getAPIRoutes())
+}
+
+func getAPIRoutes() func(r chi.Router) {
+	return func(r chi.Router) {
+		r.Get("/applicants", applicants.HandleList)
+		r.Post("/applicants", applicants.HandleCreate)
+		r.Get("/schemes", schemes.HandleList)
+		r.Get("/schemes/eligible", schemes.HandleFind)
+		r.Get("/applications", applicants.HandleList)
+		r.Post("/applications", applicants.HandleCreate)
+	}
 }
 
 func setUpMiddleware(r chi.Router, db *gorm.DB) {
