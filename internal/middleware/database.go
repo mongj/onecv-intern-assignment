@@ -8,6 +8,7 @@ import (
 	"github.com/mongj/gds-onecv-swe-assignment/internal/database"
 	"gorm.io/gorm"
 )
+
 type contextKey string
 
 const dbKey contextKey = "db"

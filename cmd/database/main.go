@@ -31,7 +31,7 @@ func migrateDB(direction migrate.MigrationDirection) {
 	if err != nil {
 		log.Fatalln(errors.Wrap(err, "error loading config"))
 	}
-	
+
 	db, err := database.Connect(cfg)
 	if err != nil {
 		log.Fatalln(errors.Wrap(err, "error connecting to database"))

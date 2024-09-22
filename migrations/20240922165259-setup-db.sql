@@ -1,19 +1,23 @@
 -- +migrate Up
+CREATE TYPE SEX as ENUM ('male', 'female');
+CREATE TYPE EMPLOYMENT_STATUS as ENUM ('employed', 'unemployed');
+CREATE TYPE MARITAL_STATUS as ENUM ('single', 'married', 'widowed', 'divorced');
+CREATE TYPE RELATION as ENUM ('parent', 'child', 'sibling', 'spouse', 'other');
 
 CREATE TABLE people (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name VARCHAR(255) NOT NULL,
-  sex SMALLINT NOT NULL,
-  dob DATE NOT NULL,
-  employment_status SMALLINT NOT NULL,
-  marital_status SMALLINT NOT NULL
+  sex SEX NOT NULL,
+  date_of_birth DATE NOT NULL,
+  employment_status EMPLOYMENT_STATUS NOT NULL,
+  marital_status MARITAL_STATUS NOT NULL
 );
 
-CREATE TABLE relationships (
+CREATE TABLE households (
   id SERIAL PRIMARY KEY,
   person_id UUID NOT NULL,
   relative_id UUID NOT NULL,
-  relationship_type SMALLINT NOT NULL,
+  relation RELATION NOT NULL,
   FOREIGN KEY (person_id) REFERENCES people(id),
   FOREIGN KEY (relative_id) REFERENCES people(id)
 );
@@ -61,5 +65,10 @@ DROP TABLE scheme_criteria;
 DROP TABLE scheme_benefits;
 DROP TABLE schemes;
 DROP TABLE applicants;
-DROP TABLE relationships;
+DROP TABLE households;
 DROP TABLE people;
+
+DROP TYPE RELATION;
+DROP TYPE MARITAL_STATUS;
+DROP TYPE EMPLOYMENT_STATUS;
+DROP TYPE SEX;
