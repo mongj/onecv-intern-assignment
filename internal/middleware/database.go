@@ -1,4 +1,4 @@
-package router
+package middleware
 
 import (
 	"context"
@@ -8,12 +8,15 @@ import (
 	"github.com/mongj/gds-onecv-swe-assignment/internal/database"
 	"gorm.io/gorm"
 )
+type contextKey string
+
+const dbKey contextKey = "db"
 
 // databaseMiddleware returns a middleware that injects the given *gorm.DB into the request context.
 func databaseMiddleware(db *gorm.DB) func(next http.Handler) http.Handler {
 	mw := func(next http.Handler) http.Handler {
 		fn := func(w http.ResponseWriter, r *http.Request) {
-			r = setDB(r, db, "db")
+			r = setDB(r, db, dbKey)
 			next.ServeHTTP(w, r)
 		}
 		return http.HandlerFunc(fn)
@@ -29,6 +32,10 @@ func setDB(r *http.Request, db *gorm.DB, key contextKey) *http.Request {
 
 // getDB retrieves the database that was previously saved to the given http.Request by setDB,
 // and returns an error if no such database exists.
+func GetDB(r *http.Request) (*gorm.DB, error) {
+	return getDB(r, dbKey)
+}
+
 func getDB(r *http.Request, key contextKey) (*gorm.DB, error) {
 	ctx := r.Context()
 	db, ok := ctx.Value(key).(*gorm.DB)
