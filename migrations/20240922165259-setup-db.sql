@@ -23,8 +23,7 @@ CREATE TABLE households (
 );
 
 CREATE TABLE applicants (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  person_id UUID NOT NULL,
+  person_id UUID PRIMARY KEY UNIQUE NOT NULL,
   FOREIGN KEY (person_id) REFERENCES people(id)
 );
 
@@ -55,7 +54,7 @@ CREATE TABLE applications (
   applicant_id UUID NOT NULL,
   scheme_id UUID NOT NULL,
   application_status SMALLINT NOT NULL,
-  FOREIGN KEY (applicant_id) REFERENCES applicants(id),
+  FOREIGN KEY (applicant_id) REFERENCES applicants(person_id),
   FOREIGN KEY (scheme_id) REFERENCES schemes(id)
 );
 
