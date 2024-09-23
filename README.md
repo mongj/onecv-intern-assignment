@@ -1,7 +1,7 @@
 # Financial Assistance Scheme Management System
 
 
-### Overview + Tech Stack
+## Overview + Tech Stack
 This project is a simple REST API server written in Go for managing financial assistance schemes for needy individuals and families.
 
 The server is built on go-chi, and uses GORM to interface with a PostgreSQL database.
@@ -12,13 +12,13 @@ The server is built on go-chi, and uses GORM to interface with a PostgreSQL data
 4. [API Documentation](#api-documentation)
 
 
-### Local Development
+## Local Development
 
-**Prequisites**
+### Prerequisites
 1. Go 1.22. Download and install Go by following the instructions [here](https://go.dev/doc/install).
 1. Docker compose. The easiest way to get docker compose is via installing [Docker Desktop](https://docs.docker.com/get-started/get-docker/), which includes Docker Engine and Docker CLI that are required by Compose.
 
-#### Getting Started
+### Getting Started
 1. Make a copy of the `.env.example` file as `.env`, and add in the `DB_USERNAME` and `DB_PASSWORD` values.
 
 2. Optionally, provide an email and pass for `PGADMIN_EMAIL` and `PGADMIN_PASSWORD` if you would like to use the pgAdmin client
@@ -46,7 +46,7 @@ make run
 ```
 
 
-### Project Structure
+## Project Structure
 The project folder is loosely structured around the MVC architecture (with models, views, and handlers/controller).
 ```
 .
@@ -74,7 +74,7 @@ The project folder is loosely structured around the MVC architecture (with model
 ```
 
 
-### Database Schema
+## Database Schema
 ![schema.png](schema.png)
 The SQL (DDL) script to create the schema is found [here](./migrations/20240922165259-setup-db.sql).
 
@@ -87,7 +87,7 @@ To remove the schema, run
 make rollbackDB
 ```
 
-#### Key considerations
+### Key considerations
 1. A `people` table is created to capture basic attributes shared among the applicants and their household members. This minimize unnecessary duplication in fields across tables, and also makes it easier if a household member becomes an applicant in the future. All applicants and household members are uniquely identified by their `person_id`.
 1. Enum types are created for fields like `sex`, `employment_status`, `marital_status` etc. which have a fixed range of values that is rarely changed.
 1. Scheme criteria are modelled using flat key-value pairs e.g. `"has_children": "true"`, `"children_school_level": "primary"`
@@ -95,5 +95,5 @@ make rollbackDB
 1. `applications` table stores each applicant-scheme pair as one record.
 
 
-### API Documentation
+## API Documentation
 The API documentation is done on postman, and it is published [here](https://documenter.getpostman.com/view/29975782/2sAXqv4fcd).
