@@ -4,6 +4,7 @@ CREATE TYPE EMPLOYMENT_STATUS as ENUM ('employed', 'unemployed');
 CREATE TYPE MARITAL_STATUS as ENUM ('single', 'married', 'widowed', 'divorced');
 CREATE TYPE RELATION as ENUM ('parent', 'child', 'sibling', 'spouse', 'other');
 CREATE TYPE SCHOOL_LEVEL as ENUM ('preschool', 'primary', 'secondary', 'post-secondary');
+CREATE TYPE APPLICATION_STATUS as ENUM ('pending', 'approved', 'rejected');
 
 CREATE TABLE people (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -54,10 +55,11 @@ CREATE TABLE applications (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   applicant_id UUID NOT NULL,
   scheme_id UUID NOT NULL,
-  application_status SMALLINT NOT NULL,
+  application_status APPLICATION_STATUS NOT NULL,
   FOREIGN KEY (applicant_id) REFERENCES applicants(person_id),
   FOREIGN KEY (scheme_id) REFERENCES schemes(id)
 );
+
 
 -- +migrate Down
 DROP TABLE applications;
@@ -68,6 +70,7 @@ DROP TABLE applicants;
 DROP TABLE households;
 DROP TABLE people;
 
+DROP TYPE APPLICATION_STATUS;
 DROP TYPE SCHOOL_LEVEL;
 DROP TYPE RELATION;
 DROP TYPE MARITAL_STATUS;

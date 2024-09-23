@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/mongj/gds-onecv-swe-assignment/internal/dataaccess"
 	"github.com/mongj/gds-onecv-swe-assignment/internal/handlers"
 	"github.com/mongj/gds-onecv-swe-assignment/internal/json"
 	"github.com/mongj/gds-onecv-swe-assignment/internal/middleware"
+	"github.com/mongj/gds-onecv-swe-assignment/internal/models"
 	"github.com/mongj/gds-onecv-swe-assignment/internal/views"
 	"github.com/pkg/errors"
 )
@@ -20,7 +20,7 @@ func HandleList(w http.ResponseWriter, r *http.Request) ([]byte, int, error) {
 		return nil, http.StatusInternalServerError, errors.Wrap(err, fmt.Sprintf(handlers.ErrGetDB, listHandlerName))
 	}
 
-	schemes, err := dataaccess.ListSchemes(db)
+	schemes, err := models.ListSchemes(db)
 	if err != nil {
 		return nil, http.StatusInternalServerError, errors.Wrap(err, "failed to fetch schemes from database")
 	}

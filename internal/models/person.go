@@ -5,6 +5,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/mongj/gds-onecv-swe-assignment/internal/enums"
+	"gorm.io/gorm"
 )
 
 type Person struct {
@@ -24,4 +25,8 @@ type Relative struct {
 
 func (Person) TableName() string {
 	return "people"
+}
+
+func (p *Person) Create(db *gorm.DB) error {
+	return db.Create(&p).Error
 }

@@ -5,10 +5,10 @@ import (
 	"net/http"
 
 	"github.com/google/uuid"
-	"github.com/mongj/gds-onecv-swe-assignment/internal/dataaccess"
 	"github.com/mongj/gds-onecv-swe-assignment/internal/handlers"
 	"github.com/mongj/gds-onecv-swe-assignment/internal/json"
 	"github.com/mongj/gds-onecv-swe-assignment/internal/middleware"
+	"github.com/mongj/gds-onecv-swe-assignment/internal/models"
 	"github.com/mongj/gds-onecv-swe-assignment/internal/views"
 	"github.com/pkg/errors"
 )
@@ -26,7 +26,7 @@ func HandleFind(w http.ResponseWriter, r *http.Request) ([]byte, int, error) {
 		return nil, http.StatusBadRequest, errors.Wrap(err, "failed to parse applicant ID")
 	}
 
-	schemes, err := dataaccess.ListEligibleSchemes(db, id)
+	schemes, err := models.ListEligibleSchemes(db, id)
 	if err != nil {
 		return nil, http.StatusInternalServerError, errors.Wrap(err, "failed to fetch eligible schemes from database")
 	}

@@ -9,9 +9,6 @@ DECLARE p2 CONSTANT UUID := gen_random_uuid();
 DECLARE c1 CONSTANT UUID := gen_random_uuid();
 DECLARE c2 CONSTANT UUID := gen_random_uuid();
 
--- Applications
-DECLARE a1 CONSTANT UUID := gen_random_uuid();
-
 BEGIN
   -- Clear existing data
 	DELETE FROM scheme_benefits;
@@ -51,6 +48,5 @@ BEGIN
   INSERT INTO applicants (person_id) VALUES (p1);
   INSERT INTO applicants (person_id) VALUES (p2);
 
-  INSERT INTO applications (id, applicant_id, application_status) VALUES (a1, p1, 'pending');
-  INSERT INTO application_schemes (application_id, scheme_id) VALUES (a1, s1);
+  INSERT INTO applications (applicant_id, scheme_id, application_status) VALUES (p1, s1, 'pending');
 END $$;
