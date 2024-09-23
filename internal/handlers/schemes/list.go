@@ -14,22 +14,22 @@ import (
 
 const listHandlerName = "schemes::list"
 
-func HandleList(w http.ResponseWriter, r *http.Request) ([]byte, int, error) {
+func HandleList(w http.ResponseWriter, r *http.Request) ([]byte, error) {
 	db, err := middleware.GetDB(r)
 	if err != nil {
-		return nil, http.StatusInternalServerError, errors.Wrap(err, fmt.Sprintf(handlers.ErrGetDB, listHandlerName))
+		return nil, errors.Wrap(err, fmt.Sprintf(handlers.ErrGetDB, listHandlerName))
 	}
 
 	schemes, err := models.ListSchemes(db)
 	if err != nil {
-		return nil, http.StatusInternalServerError, errors.Wrap(err, "failed to fetch schemes from database")
+		return nil, errors.Wrap(err, "failed to fetch schemes from database")
 	}
 	schemeListView := views.SchemeListViewFrom(schemes)
 
 	data, err := json.EncodeView(schemeListView)
 	if err != nil {
-		return nil, http.StatusInternalServerError, errors.Wrap(err, fmt.Sprintf(handlers.ErrEncodeView, listHandlerName))
+		return nil, errors.Wrap(err, fmt.Sprintf(handlers.ErrEncodeView, listHandlerName))
 	}
 
-	return data, http.StatusOK, nil
+	return data, nil
 }

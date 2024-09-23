@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
+	"github.com/mongj/gds-onecv-swe-assignment/internal/api/exterror"
 	"github.com/mongj/gds-onecv-swe-assignment/internal/enums"
 	"gorm.io/gorm"
 )
@@ -22,10 +23,17 @@ func (a *Application) Create(db *gorm.DB) error {
 }
 
 func (a *Application) BeforeCreate(db *gorm.DB) error {
+	const (
+		applicantIdNotFound            = "applicant with ID %s does not exist"
+		schemeIdNotFound               = "scheme with ID %s does not exist"
+		applicantNotEligible           = "applicant with ID %s is not eligible for scheme with ID %s"
+		applicantHasPendingApplication = "applicant with ID %s already has a pending application for scheme with ID %s"
+	)
+
 	// Check that applicant id exists and is valid
 	applicant, err := ReadApplicant(db, a.ApplicantID)
 	if applicant == nil {
-		return fmt.Errorf("applicant with ID %s does not exist", a.ApplicantID)
+		return &exterror.BadRequest{Message: fmt.Sprintf(applicantIdNotFound, a.ApplicantID)}
 	}
 	if err != nil {
 		return err
@@ -34,7 +42,7 @@ func (a *Application) BeforeCreate(db *gorm.DB) error {
 	// Check that the scheme ID exists and is valid
 	scheme, err := ReadScheme(db, a.SchemeID)
 	if scheme == nil {
-		return fmt.Errorf("scheme with ID %s does not exist", a.SchemeID)
+		return &exterror.BadRequest{Message: fmt.Sprintf(schemeIdNotFound, a.SchemeID)}
 	}
 	if err != nil {
 		return err
@@ -46,18 +54,21 @@ func (a *Application) BeforeCreate(db *gorm.DB) error {
 		return err
 	}
 	if !ok {
-		return fmt.Errorf("applicant with ID %s is not eligible for scheme with ID %s", a.ApplicantID, a.SchemeID)
+		return &exterror.BadRequest{Message: fmt.Sprintf(applicantNotEligible, a.ApplicantID, a.SchemeID)}
 	}
 
 	// Check that the applicant does not have another pending application for the same scheme
 	var count int64
 	if err := db.Model(&Application{}).
-		Where("applicant_id = ? AND scheme_id = ? AND application_status = ?", a.ApplicantID, a.SchemeID, enums.ApplicationStatusPending).
+		Where(
+			"applicant_id = ? AND scheme_id = ? AND application_status = ?", 
+			a.ApplicantID, a.SchemeID, enums.ApplicationStatusPending,
+		).
 		Count(&count).Error; err != nil {
 		return err
 	}
 	if count > 0 {
-		return fmt.Errorf("applicant with ID %s already has a pending application for scheme with ID %s", a.ApplicantID, a.SchemeID)
+		return &exterror.BadRequest{Message: fmt.Sprintf(applicantHasPendingApplication, a.ApplicantID, a.SchemeID)}
 	}
 
 	return nil

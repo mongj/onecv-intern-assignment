@@ -14,22 +14,22 @@ import (
 
 const listHandlerName = "applications::list"
 
-func HandleList(w http.ResponseWriter, r *http.Request) ([]byte, int, error) {
+func HandleList(w http.ResponseWriter, r *http.Request) ([]byte, error) {
 	db, err := middleware.GetDB(r)
 	if err != nil {
-		return nil, http.StatusInternalServerError, errors.Wrap(err, fmt.Sprintf(handlers.ErrGetDB, listHandlerName))
+		return nil, errors.Wrap(err, fmt.Sprintf(handlers.ErrGetDB, listHandlerName))
 	}
 
 	applications, err := models.ListApplications(db)
 	if err != nil {
-		return nil, http.StatusInternalServerError, errors.Wrap(err, "failed to list applicants")
+		return nil, errors.Wrap(err, "failed to list applicants")
 	}
 	applicantListViews := views.ApplicationListViewFrom(applications)
 
 	data, err := json.EncodeView(applicantListViews)
 	if err != nil {
-		return nil, http.StatusInternalServerError, errors.Wrap(err, fmt.Sprintf(handlers.ErrEncodeView, listHandlerName))
+		return nil, errors.Wrap(err, fmt.Sprintf(handlers.ErrEncodeView, listHandlerName))
 	}
 
-	return data, http.StatusOK, nil
+	return data, nil
 }

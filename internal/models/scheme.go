@@ -55,7 +55,7 @@ func (s *Scheme) isEligible(db *gorm.DB, id uuid.UUID) (bool, error) {
 				Model(&Household{}).
 				Where("person_id = ? AND relation = ?", id, enums.RelationChild).
 				Count(&cnt).
-				Error;
+				Error
 			if err != nil {
 				return false, err
 			}
@@ -70,7 +70,7 @@ func (s *Scheme) isEligible(db *gorm.DB, id uuid.UUID) (bool, error) {
 				Where("households.person_id = ? AND households.relation = ?", id, enums.RelationChild).
 				Where("people.current_school_level = ?", enums.SchoolLevel(c.CriteriaValue)).
 				Count(&cnt).
-				Error;
+				Error
 			if err != nil {
 				return false, err
 			}

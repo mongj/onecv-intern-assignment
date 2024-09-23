@@ -14,30 +14,30 @@ import (
 
 const listHandlerName = "applicants::list"
 
-func HandleList(w http.ResponseWriter, r *http.Request) ([]byte, int, error) {
+func HandleList(w http.ResponseWriter, r *http.Request) ([]byte, error) {
 	db, err := middleware.GetDB(r)
 	if err != nil {
-		return nil, http.StatusInternalServerError, errors.Wrap(err, fmt.Sprintf(handlers.ErrGetDB, listHandlerName))
+		return nil, errors.Wrap(err, fmt.Sprintf(handlers.ErrGetDB, listHandlerName))
 	}
 
 	applicants, err := models.ListApplicants(db)
 	if err != nil {
-		return nil, http.StatusInternalServerError, errors.Wrap(err, "failed to list applicants")
+		return nil, errors.Wrap(err, "failed to list applicants")
 	}
 	applicantListViews := make([]views.ApplicantViews, len(applicants))
 	for i, a := range applicants {
 		// Get relative view
 		households, err := models.HouseholdMembersByPersonID(db, a.PersonID)
 		if err != nil {
-			return nil, http.StatusInternalServerError, errors.Wrap(err, "failed to read household")
+			return nil, errors.Wrap(err, "failed to read household")
 		}
 		applicantListViews[i] = views.ApplicantViewFrom(a, households)
 	}
 
 	data, err := json.EncodeView(applicantListViews)
 	if err != nil {
-		return nil, http.StatusInternalServerError, errors.Wrap(err, fmt.Sprintf(handlers.ErrEncodeView, listHandlerName))
+		return nil, errors.Wrap(err, fmt.Sprintf(handlers.ErrEncodeView, listHandlerName))
 	}
 
-	return data, http.StatusOK, nil
+	return data, nil
 }
