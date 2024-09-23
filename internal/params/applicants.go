@@ -25,11 +25,12 @@ func (d *DateOnly) UnmarshalJSON(b []byte) error {
 }
 
 type PersonParams struct {
-	Name             string                 `json:"name"`
-	EmploymentStatus enums.EmploymentStatus `json:"employment_status"`
-	Sex              enums.Sex              `json:"sex"`
-	DateOfBirth      DateOnly               `json:"date_of_birth"`
-	MaritalStatus    enums.MaritalStatus    `json:"marital_status"`
+	Name               string                 `json:"name"`
+	EmploymentStatus   enums.EmploymentStatus `json:"employment_status"`
+	Sex                enums.Sex              `json:"sex"`
+	DateOfBirth        DateOnly               `json:"date_of_birth"`
+	MaritalStatus      enums.MaritalStatus    `json:"marital_status"`
+	CurrentSchoolLevel *enums.SchoolLevel     `json:"current_school_level,omitempty"`
 }
 
 type RelativeParams struct {
@@ -46,21 +47,23 @@ type ApplicantParams struct {
 // and a slice of Relatives representing the applicant's family members.
 func (p *ApplicantParams) ToModel() (models.Person, []models.Relative) {
 	applicant := models.Person{
-		Name:             p.Name,
-		DateOfBirth:      time.Time(p.DateOfBirth),
-		Sex:              p.Sex,
-		EmploymentStatus: p.EmploymentStatus,
-		MaritalStatus:    p.MaritalStatus,
+		Name:               p.Name,
+		DateOfBirth:        time.Time(p.DateOfBirth),
+		Sex:                p.Sex,
+		EmploymentStatus:   p.EmploymentStatus,
+		MaritalStatus:      p.MaritalStatus,
+		CurrentSchoolLevel: p.CurrentSchoolLevel,
 	}
 	relatives := make([]models.Relative, len(p.Household))
 	for i, relative := range p.Household {
 		relatives[i] = models.Relative{
 			Person: models.Person{
-				Name:             relative.Name,
-				DateOfBirth:      time.Time(relative.DateOfBirth),
-				Sex:              relative.Sex,
-				EmploymentStatus: relative.EmploymentStatus,
-				MaritalStatus:    relative.MaritalStatus,
+				Name:               relative.Name,
+				DateOfBirth:        time.Time(relative.DateOfBirth),
+				Sex:                relative.Sex,
+				EmploymentStatus:   relative.EmploymentStatus,
+				MaritalStatus:      relative.MaritalStatus,
+				CurrentSchoolLevel: relative.CurrentSchoolLevel,
 			},
 			Relation: relative.Relation,
 		}

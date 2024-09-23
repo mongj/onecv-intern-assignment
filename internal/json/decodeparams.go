@@ -7,7 +7,7 @@ import (
 
 func DecodeParams(r io.Reader, view interface{}) error {
 	decoder := json.NewDecoder(r)
-	err := decoder.Decode(view)
+	err := decoder.Decode(&view)
 	if err != nil {
 		return err
 	}

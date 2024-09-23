@@ -4,6 +4,7 @@ type Sex string
 type EmploymentStatus string
 type MaritalStatus string
 type Relation string
+type SchoolLevel string
 
 const (
 	MALE   Sex = "male"
@@ -28,4 +29,11 @@ const (
 	SIBLING Relation = "sibling"
 	SPOUSE  Relation = "spouse"
 	OTHER   Relation = "other"
+)
+
+const (
+	PRESCHOOL     SchoolLevel = "preschool"
+	PRIMARY       SchoolLevel = "primary"
+	SECONDARY     SchoolLevel = "secondary"
+	POSTSECONDARY SchoolLevel = "post-secondary"
 )

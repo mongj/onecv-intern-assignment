@@ -3,6 +3,7 @@ CREATE TYPE SEX as ENUM ('male', 'female');
 CREATE TYPE EMPLOYMENT_STATUS as ENUM ('employed', 'unemployed');
 CREATE TYPE MARITAL_STATUS as ENUM ('single', 'married', 'widowed', 'divorced');
 CREATE TYPE RELATION as ENUM ('parent', 'child', 'sibling', 'spouse', 'other');
+CREATE TYPE SCHOOL_LEVEL as ENUM ('preschool', 'primary', 'secondary', 'post-secondary');
 
 CREATE TABLE people (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -10,7 +11,8 @@ CREATE TABLE people (
   sex SEX NOT NULL,
   date_of_birth DATE NOT NULL,
   employment_status EMPLOYMENT_STATUS NOT NULL,
-  marital_status MARITAL_STATUS NOT NULL
+  marital_status MARITAL_STATUS NOT NULL,
+  current_school_level SCHOOL_LEVEL
 );
 
 CREATE TABLE households (
@@ -66,6 +68,7 @@ DROP TABLE applicants;
 DROP TABLE households;
 DROP TABLE people;
 
+DROP TYPE SCHOOL_LEVEL;
 DROP TYPE RELATION;
 DROP TYPE MARITAL_STATUS;
 DROP TYPE EMPLOYMENT_STATUS;
