@@ -3,12 +3,13 @@ package views
 import (
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/mongj/gds-onecv-swe-assignment/internal/enums"
 	"github.com/mongj/gds-onecv-swe-assignment/internal/models"
 )
 
-type PersonView struct {
-	ID                 string                 `json:"id"`
+type Person struct {
+	ID                 uuid.UUID              `json:"id"`
 	Name               string                 `json:"name"`
 	EmploymentStatus   enums.EmploymentStatus `json:"employment_status"`
 	Sex                enums.Sex              `json:"sex"`
@@ -17,20 +18,20 @@ type PersonView struct {
 	CurrentSchoolLevel *enums.SchoolLevel     `json:"current_school_level,omitempty"`
 }
 
-type RelativeView struct {
-	PersonView
+type Relative struct {
+	Person
 	Relation enums.Relation `json:"relation"`
 }
 
 type ApplicantViews struct {
-	PersonView
-	Household []RelativeView `json:"household"`
+	Person
+	Household []Relative `json:"household"`
 }
 
-func ApplicantViewFrom(applicant models.Applicant, household []models.Household) ApplicantViews {
+func ApplicantFrom(applicant models.Applicant, household []models.Household) ApplicantViews {
 	return ApplicantViews{
-		PersonView: PersonView{
-			ID:                 applicant.Person.ID.String(),
+		Person: Person{
+			ID:                 applicant.Person.ID,
 			Name:               applicant.Person.Name,
 			EmploymentStatus:   applicant.Person.EmploymentStatus,
 			Sex:                applicant.Person.Sex,
@@ -42,12 +43,12 @@ func ApplicantViewFrom(applicant models.Applicant, household []models.Household)
 	}
 }
 
-func relativeViewsFrom(household []models.Household) []RelativeView {
-	relativeViews := make([]RelativeView, len(household))
+func relativeViewsFrom(household []models.Household) []Relative {
+	relativeViews := make([]Relative, len(household))
 	for i, h := range household {
-		relativeViews[i] = RelativeView{
-			PersonView: PersonView{
-				ID:                 h.Relative.ID.String(),
+		relativeViews[i] = Relative{
+			Person: Person{
+				ID:                 h.Relative.ID,
 				Name:               h.Relative.Name,
 				EmploymentStatus:   h.Relative.EmploymentStatus,
 				Sex:                h.Relative.Sex,

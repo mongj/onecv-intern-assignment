@@ -6,45 +6,45 @@ import (
 	"github.com/mongj/gds-onecv-swe-assignment/internal/models"
 )
 
-type SchemeListView struct {
-	Schemes []SchemeView `json:"schemes"`
+type SchemeList struct {
+	Schemes []Scheme `json:"schemes"`
 }
 
-type SchemeView struct {
-	ID       uuid.UUID            `json:"id"`
-	Name     string               `json:"name"`
-	Criteria []schemeCriteriaView `json:"criteria"`
-	Benefits []schemeBenefitView  `json:"benefits"`
+type Scheme struct {
+	ID       uuid.UUID        `json:"id"`
+	Name     string           `json:"name"`
+	Criteria []schemeCriteria `json:"criteria"`
+	Benefits []schemeBenefit  `json:"benefits"`
 }
 
-type schemeCriteriaView struct {
+type schemeCriteria struct {
 	Key   string `json:"key"`
 	Value string `json:"value"`
 }
 
-type schemeBenefitView struct {
+type schemeBenefit struct {
 	ID     uuid.UUID `json:"id"`
 	Name   string    `json:"name"`
 	Amount float32   `json:"amount"`
 }
 
-func SchemeListViewFrom(schemes []models.Scheme) SchemeListView {
-	schemeViews := make([]SchemeView, len(schemes))
+func SchemeListFrom(schemes []models.Scheme) SchemeList {
+	schemeViews := make([]Scheme, len(schemes))
 	for i, s := range schemes {
-		schemeViews[i] = SchemeView{
+		schemeViews[i] = Scheme{
 			ID:       s.ID,
 			Name:     s.Name,
 			Criteria: criteriaViewsFrom(s.Criteria),
 			Benefits: benefitViewsFrom(s.Benefits),
 		}
 	}
-	return SchemeListView{Schemes: schemeViews}
+	return SchemeList{Schemes: schemeViews}
 }
 
-func criteriaViewsFrom(criteria []models.SchemeCriteria) []schemeCriteriaView {
-	criteriaViews := make([]schemeCriteriaView, len(criteria))
+func criteriaViewsFrom(criteria []models.SchemeCriteria) []schemeCriteria {
+	criteriaViews := make([]schemeCriteria, len(criteria))
 	for i, c := range criteria {
-		criteriaViews[i] = schemeCriteriaView{
+		criteriaViews[i] = schemeCriteria{
 			Key:   schemecriteria.KeyToString[c.CriteriaKey],
 			Value: c.CriteriaValue,
 		}
@@ -52,10 +52,10 @@ func criteriaViewsFrom(criteria []models.SchemeCriteria) []schemeCriteriaView {
 	return criteriaViews
 }
 
-func benefitViewsFrom(benefits []models.SchemeBenefit) []schemeBenefitView {
-	benefitViews := make([]schemeBenefitView, len(benefits))
+func benefitViewsFrom(benefits []models.SchemeBenefit) []schemeBenefit {
+	benefitViews := make([]schemeBenefit, len(benefits))
 	for i, b := range benefits {
-		benefitViews[i] = schemeBenefitView{
+		benefitViews[i] = schemeBenefit{
 			ID:     b.ID,
 			Name:   b.Description,
 			Amount: b.Amount,

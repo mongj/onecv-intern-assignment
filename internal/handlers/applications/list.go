@@ -24,7 +24,7 @@ func HandleList(w http.ResponseWriter, r *http.Request) ([]byte, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to list applicants")
 	}
-	applicantListViews := views.ApplicationListViewFrom(applications)
+	applicantListViews := views.ApplicationListFrom(applications)
 
 	data, err := json.EncodeView(applicantListViews)
 	if err != nil {

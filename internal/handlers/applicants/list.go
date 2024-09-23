@@ -26,12 +26,11 @@ func HandleList(w http.ResponseWriter, r *http.Request) ([]byte, error) {
 	}
 	applicantListViews := make([]views.ApplicantViews, len(applicants))
 	for i, a := range applicants {
-		// Get relative view
 		households, err := models.HouseholdMembersByPersonID(db, a.PersonID)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to read household")
 		}
-		applicantListViews[i] = views.ApplicantViewFrom(a, households)
+		applicantListViews[i] = views.ApplicantFrom(a, households)
 	}
 
 	data, err := json.EncodeView(applicantListViews)

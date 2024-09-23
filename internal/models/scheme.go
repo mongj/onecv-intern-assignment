@@ -102,32 +102,32 @@ func ListSchemes(db *gorm.DB) ([]Scheme, error) {
 func ListEligibleSchemes(db *gorm.DB, id uuid.UUID) ([]Scheme, error) {
 	var schemes []Scheme
 
-	hadChldQuery := db.
+	hasChldQry := db.
 		Table("households h").
 		Select("1").
 		Where(fmt.Sprintf("h.person_id = a.person_id AND h.relation = '%s'", enums.RelationChild))
 
-	chldSchLvlQuery := db.
+	chldSchLvlQry := db.
 		Table("people r").
 		Select("ARRAY_AGG(DISTINCT r.current_school_level::TEXT)").
 		Joins("JOIN households h ON r.id = h.relative_id").
 		Where("h.person_id = a.person_id")
 
-	applicantInfoQuery := db.
+	applicantInfoQry := db.
 		Table("applicants a").
 		Select(
 			"p.*, EXISTS(?) AS has_children, (?) AS children_school_levels",
-			hadChldQuery, chldSchLvlQuery,
+			hasChldQry, chldSchLvlQry,
 		).
 		Joins("JOIN people p ON a.person_id = p.id").
 		Where("p.id = ?", id)
 
-	allCriteriaQuery := db.
+	allCtrQry := db.
 		Table("scheme_criteria sc").
 		Select("sc.scheme_id, COUNT(sc.scheme_id) AS total_cnt").
 		Group("sc.scheme_id")
 
-	fulfilledCriteriaQuery := db.
+	fulfilledCtrQry := db.
 		Table("scheme_criteria sc").
 		Select("sc.scheme_id, COUNT(sc.scheme_id) AS fulfilled_cnt").
 		Joins(fmt.Sprintf(`
@@ -143,21 +143,21 @@ func ListEligibleSchemes(db *gorm.DB, id uuid.UUID) ([]Scheme, error) {
 			schemecriteria.MaritalStatus,
 			schemecriteria.HasChildren,
 			schemecriteria.ChildrenSchoolLevel,
-		), applicantInfoQuery,
+		), applicantInfoQry,
 		).
 		Group("sc.scheme_id")
 
-	eligibleSchemeIDsQuery := db.
-		Table("(?) AS fc", fulfilledCriteriaQuery).
+	eligibleSchemeIDsQry := db.
+		Table("(?) AS fc", fulfilledCtrQry).
 		Select("fc.scheme_id").
-		Joins("JOIN (?) AS ac ON fc.scheme_id = ac.scheme_id", allCriteriaQuery).
+		Joins("JOIN (?) AS ac ON fc.scheme_id = ac.scheme_id", allCtrQry).
 		Where("fc.fulfilled_cnt = ac.total_cnt")
 
 	err := db.
 		Model(&Scheme{}).
 		Preload("Benefits").
 		Preload("Criteria").
-		Joins("JOIN (?) AS es ON schemes.id = es.scheme_id", eligibleSchemeIDsQuery).
+		Joins("JOIN (?) AS es ON schemes.id = es.scheme_id", eligibleSchemeIDsQry).
 		Find(&schemes).
 		Error
 	if err != nil {

@@ -33,7 +33,9 @@ func (a *Application) BeforeCreate(db *gorm.DB) error {
 	// Check that applicant id exists and is valid
 	applicant, err := ReadApplicant(db, a.ApplicantID)
 	if applicant == nil {
-		return &exterror.BadRequest{Message: fmt.Sprintf(applicantIdNotFound, a.ApplicantID)}
+		return &exterror.BadRequest{
+			Message: fmt.Sprintf(applicantIdNotFound, a.ApplicantID),
+		}
 	}
 	if err != nil {
 		return err
@@ -42,7 +44,9 @@ func (a *Application) BeforeCreate(db *gorm.DB) error {
 	// Check that the scheme ID exists and is valid
 	scheme, err := ReadScheme(db, a.SchemeID)
 	if scheme == nil {
-		return &exterror.BadRequest{Message: fmt.Sprintf(schemeIdNotFound, a.SchemeID)}
+		return &exterror.BadRequest{
+			Message: fmt.Sprintf(schemeIdNotFound, a.SchemeID),
+		}
 	}
 	if err != nil {
 		return err
@@ -54,21 +58,26 @@ func (a *Application) BeforeCreate(db *gorm.DB) error {
 		return err
 	}
 	if !ok {
-		return &exterror.BadRequest{Message: fmt.Sprintf(applicantNotEligible, a.ApplicantID, a.SchemeID)}
+		return &exterror.BadRequest{
+			Message: fmt.Sprintf(applicantNotEligible, a.ApplicantID, a.SchemeID),
+		}
 	}
 
-	// Check that the applicant does not have another pending application for the same scheme
+	// Check that the applicant does not have
+	// another pending application for the same scheme
 	var count int64
 	if err := db.Model(&Application{}).
 		Where(
-			"applicant_id = ? AND scheme_id = ? AND application_status = ?", 
+			"applicant_id = ? AND scheme_id = ? AND application_status = ?",
 			a.ApplicantID, a.SchemeID, enums.ApplicationStatusPending,
 		).
 		Count(&count).Error; err != nil {
 		return err
 	}
 	if count > 0 {
-		return &exterror.BadRequest{Message: fmt.Sprintf(applicantHasPendingApplication, a.ApplicantID, a.SchemeID)}
+		return &exterror.BadRequest{
+			Message: fmt.Sprintf(applicantHasPendingApplication, a.ApplicantID, a.SchemeID),
+		}
 	}
 
 	return nil

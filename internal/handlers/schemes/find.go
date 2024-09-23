@@ -31,7 +31,7 @@ func HandleFind(w http.ResponseWriter, r *http.Request) ([]byte, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to fetch eligible schemes from database")
 	}
-	schemeListView := views.SchemeListViewFrom(schemes)
+	schemeListView := views.SchemeListFrom(schemes)
 
 	data, err := json.EncodeView(schemeListView)
 	if err != nil {

@@ -6,7 +6,7 @@ import (
 	"github.com/mongj/gds-onecv-swe-assignment/internal/models"
 )
 
-type ApplicationListView struct {
+type ApplicationList struct {
 	Applications []Application `json:"applications"`
 }
 
@@ -17,7 +17,7 @@ type Application struct {
 	ApplicationStatus enums.ApplicationStatus `json:"application_status"`
 }
 
-func ApplicationListViewFrom(applications []models.Application) ApplicationListView {
+func ApplicationListFrom(applications []models.Application) ApplicationList {
 	applicationViews := make([]Application, len(applications))
 	for i, a := range applications {
 		applicationViews[i] = Application{
@@ -27,5 +27,5 @@ func ApplicationListViewFrom(applications []models.Application) ApplicationListV
 			ApplicationStatus: a.ApplicationStatus,
 		}
 	}
-	return ApplicationListView{Applications: applicationViews}
+	return ApplicationList{Applications: applicationViews}
 }
