@@ -14,29 +14,31 @@ The server is built on go-chi, and uses GORM to interface with a PostgreSQL data
 
 **Prequisites**
 1. Go 1.22. Download and install Go by following the instructions [here](https://go.dev/doc/install).
-2. Docker compose. The easiest way to get docker compose is via installing [Docker Desktop](https://docs.docker.com/get-started/get-docker/), which includes Docker Engine and Docker CLI that are required by Compose.
+1. Docker compose. The easiest way to get docker compose is via installing [Docker Desktop](https://docs.docker.com/get-started/get-docker/), which includes Docker Engine and Docker CLI that are required by Compose.
 
 #### Getting Started
 1. Make a copy of the `.env.example` file as `.env`, and add in the `DB_USERNAME` and `DB_PASSWORD` values.
 
-2. Spin up the postgres container
+2. Optionally, provide an email and pass for `PGADMIN_EMAIL` and `PGADMIN_PASSWORD` if you would like to use the pgAdmin client
+
+3. Spin up the postgres container, which will be exposed on localhost at port number specified in `.env` (default to 5432)
 ```
 docker compose up -d
 ```
-This will also create up a pgadmin container, accessible via http://localhost:5050/
+This will also create up a pgadmin container, accessible via `http://localhost:<PGADMIN_PORT>/` if `PGADMIN_EMAIL` and `PGADMIN_PASSWORD` is provided.
 
-3. Database operations (migrate, seed) are provided by the migration tool at `/cmd/database/main.go`.
+4. Database operations (migrate, seed) are provided by the database tool at `/cmd/database/main.go`.
 To migrate the database, run 
 ```
 make migrateDB
 ```
 For now, this will apply all migrations by default.
 
-4. Optionally, seed the database
+5. Optionally, seed the database
 ```
 make seedDB
 ```
-5. Start the server
+6. Start the server
 ```
 make run
 ```
@@ -45,4 +47,21 @@ make run
 TODOs
 
 ### Database Schema
-TODO
+![schema.png](schema.png)
+The SQL (DDL) script to create the schema is found [here](./migrations/20240922165259-setup-db.sql).
+
+To create the schema, run
+```
+make migrateDB
+```
+To remove the schema, run
+```
+make rollbackDB
+```
+
+#### Key considerations
+1. A `people` table is created to capture basic attributes shared among the applicants and their household members. This minimize unnecessary duplication in fields across tables, and also makes it easier if a household member becomes an applicant in the future. All applicants and household members are uniquely identified by their `person_id`.
+1. Enum types are created for fields like `sex`, `employment_status`, `marital_status` etc. which have a fixed range of values that is rarely changed.
+1. Scheme criteria are modelled using flat key-value pairs e.g. `"has_children": "true"`, `"children_school_level": "primary"`
+1. Criteria keys are stored as an `int` in the database and maps to the corresponding criteria in the application code. Enum is not used in this case as there can be many criteria which may likely also change overtime.
+1. `applications` table stores each applicant-scheme pair as one record.
