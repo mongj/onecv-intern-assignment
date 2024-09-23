@@ -1,5 +1,6 @@
 # Financial Assistance Scheme Management System
 
+
 ### Overview + Tech Stack
 This project is a simple REST API server written in Go for managing financial assistance schemes for needy individuals and families.
 
@@ -8,7 +9,8 @@ The server is built on go-chi, and uses GORM to interface with a PostgreSQL data
 1. [Local Development](#local-development)
 2. [Project Structure](#project-structure)
 3. [Database Schema](#database-schema)
-4. [Deployment](#deployment)
+4. [API Documentation](#api-documentation)
+
 
 ### Local Development
 
@@ -43,25 +45,6 @@ make seedDB
 make run
 ```
 
-### Database Schema
-![schema.png](schema.png)
-The SQL (DDL) script to create the schema is found [here](./migrations/20240922165259-setup-db.sql).
-
-To create the schema, run
-```
-make migrateDB
-```
-To remove the schema, run
-```
-make rollbackDB
-```
-
-#### Key considerations
-1. A `people` table is created to capture basic attributes shared among the applicants and their household members. This minimize unnecessary duplication in fields across tables, and also makes it easier if a household member becomes an applicant in the future. All applicants and household members are uniquely identified by their `person_id`.
-1. Enum types are created for fields like `sex`, `employment_status`, `marital_status` etc. which have a fixed range of values that is rarely changed.
-1. Scheme criteria are modelled using flat key-value pairs e.g. `"has_children": "true"`, `"children_school_level": "primary"`
-1. Criteria keys are stored as an `int` in the database and maps to the corresponding criteria in the application code. Enum is not used in this case as there can be many criteria which may likely also change overtime.
-1. `applications` table stores each applicant-scheme pair as one record.
 
 ### Project Structure
 The project folder is loosely structured around the MVC architecture (with models, views, and handlers/controller).
@@ -89,3 +72,28 @@ The project folder is loosely structured around the MVC architecture (with model
 |   └── seed.sql
 └── ...
 ```
+
+
+### Database Schema
+![schema.png](schema.png)
+The SQL (DDL) script to create the schema is found [here](./migrations/20240922165259-setup-db.sql).
+
+To create the schema, run
+```
+make migrateDB
+```
+To remove the schema, run
+```
+make rollbackDB
+```
+
+#### Key considerations
+1. A `people` table is created to capture basic attributes shared among the applicants and their household members. This minimize unnecessary duplication in fields across tables, and also makes it easier if a household member becomes an applicant in the future. All applicants and household members are uniquely identified by their `person_id`.
+1. Enum types are created for fields like `sex`, `employment_status`, `marital_status` etc. which have a fixed range of values that is rarely changed.
+1. Scheme criteria are modelled using flat key-value pairs e.g. `"has_children": "true"`, `"children_school_level": "primary"`
+1. Criteria keys are stored as an `int` in the database and maps to the corresponding criteria in the application code. Enum is not used in this case as there can be many criteria which may likely also change overtime.
+1. `applications` table stores each applicant-scheme pair as one record.
+
+
+### API Documentation
+The API documentation is done on postman, and it is published [here](https://documenter.getpostman.com/view/29975782/2sAXqv4fcd).
