@@ -68,3 +68,11 @@ func CreateApplications(db *gorm.DB, appl []Application) error {
 
 	return tx.Commit().Error
 }
+
+func ListApplications(db *gorm.DB) ([]Application, error) {
+	var a []Application
+	if err := db.Preload("Applicant").Preload("Scheme").Find(&a).Error; err != nil {
+		return nil, err
+	}
+	return a, nil
+}
