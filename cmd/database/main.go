@@ -20,7 +20,7 @@ func main() {
 	case "rollbackDB":
 		migrateDB(migrate.Down)
 	default:
-		errors.Errorf("Unknown command: %s", flag.Arg(0))
+		_ = errors.Errorf("Unknown command: %s", flag.Arg(0))
 	}
 }
 

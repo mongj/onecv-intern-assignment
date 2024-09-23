@@ -21,17 +21,27 @@ func HTTPHandler(handler Handler) http.HandlerFunc {
 
 		response, code, err := handler(w, r)
 		if err != nil {
+			log.Println(err)
+
 			if code >= 500 {
 				w.WriteHeader(http.StatusInternalServerError)
-				w.Write([]byte(`{"error": "Internal Server Error"}`))
-				log.Println(err)
+				_, err := w.Write([]byte(`{"error": "Internal Server Error"}`))
+				if err != nil {
+					log.Println(err)
+				}
 			} else {
 				w.WriteHeader(code)
-				w.Write([]byte(fmt.Sprintf(`{"error": "%s"}`, err.Error())))
+				_, err := w.Write([]byte(fmt.Sprintf(`{"error": "%s"}`, err.Error())))
+				if err != nil {
+					log.Println(err)
+				}
 			}
 		} else {
 			w.WriteHeader(code)
-			w.Write(response)
+			_, err := w.Write(response)
+			if err != nil {
+				log.Println(err)
+			}
 		}
 	}
 }
