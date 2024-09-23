@@ -5,9 +5,5 @@ import (
 )
 
 func EncodeView(view interface{}) ([]byte, error) {
-	data, err := json.Marshal(view)
-	if err != nil {
-		return nil, err
-	}
-	return data, nil
+	return json.Marshal(view)
 }
