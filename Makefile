@@ -8,7 +8,7 @@ MIGRATION_TOOL_PATH=./cmd/database/main.go
 
 .PHONY: run build clean lint
 
-resetDB: rollbackDB migrateDB seedDB
+setupDB: migrateDB seedDB
 
 seedDB:
 	@echo "Seeding database..."
@@ -24,7 +24,7 @@ rollbackDB:
 
 run:
 	@echo "Running server in development mode..."
-	@GO_ENV=development reflex -d none -r '\.go$$' -s go run ${SERVER_PATH}
+	@GO_ENV=development go run ${SERVER_PATH}
 
 build:
 	@echo "Building server at '${BINARY_PATH}'..."
