@@ -43,9 +43,6 @@ make seedDB
 make run
 ```
 
-### Project Structure
-TODOs
-
 ### Database Schema
 ![schema.png](schema.png)
 The SQL (DDL) script to create the schema is found [here](./migrations/20240922165259-setup-db.sql).
@@ -65,3 +62,30 @@ make rollbackDB
 1. Scheme criteria are modelled using flat key-value pairs e.g. `"has_children": "true"`, `"children_school_level": "primary"`
 1. Criteria keys are stored as an `int` in the database and maps to the corresponding criteria in the application code. Enum is not used in this case as there can be many criteria which may likely also change overtime.
 1. `applications` table stores each applicant-scheme pair as one record.
+
+### Project Structure
+The project folder is loosely structured around the MVC architecture (with models, views, and handlers/controller).
+```
+.
+├── cmd
+│   ├── database
+│   │   └── main.go
+│   └── server
+│       └── main.go
+├── internal
+│   ├── api
+│   ├── config
+│   ├── database
+│   ├── enums
+│   ├── handlers
+│   ├── middleware
+│   ├── models
+│   ├── params
+│   ├── router
+│   └── views
+├── migrations
+│   └── 20240922165259-setup-db.sql
+├── seeds
+|   └── seed.sql
+└── ...
+```
