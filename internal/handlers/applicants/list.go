@@ -32,7 +32,7 @@ func HandleList(w http.ResponseWriter, r *http.Request) ([]byte, int, error) {
 		if err != nil {
 			return nil, http.StatusInternalServerError, errors.Wrap(err, "failed to read household")
 		}
-		applicantListViews[i] = views.ApplicantListViewFrom(a, households)
+		applicantListViews[i] = views.ApplicantViewFrom(a, households)
 	}
 
 	data, err := json.EncodeView(applicantListViews)

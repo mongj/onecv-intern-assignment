@@ -1,7 +1,35 @@
 package schemes
 
-import "net/http"
+import (
+	"fmt"
+	"net/http"
 
-func HandleList(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("list schemes"))
+	"github.com/mongj/gds-onecv-swe-assignment/internal/dataaccess"
+	"github.com/mongj/gds-onecv-swe-assignment/internal/handlers"
+	"github.com/mongj/gds-onecv-swe-assignment/internal/json"
+	"github.com/mongj/gds-onecv-swe-assignment/internal/middleware"
+	"github.com/mongj/gds-onecv-swe-assignment/internal/views"
+	"github.com/pkg/errors"
+)
+
+const listHandlerName = "schemes::list"
+
+func HandleList(w http.ResponseWriter, r *http.Request) ([]byte, int, error) {
+	db, err := middleware.GetDB(r)
+	if err != nil {
+		return nil, http.StatusInternalServerError, errors.Wrap(err, fmt.Sprintf(handlers.ErrGetDB, listHandlerName))
+	}
+
+	schemes, err := dataaccess.ListSchemes(db)
+	if err != nil {
+		return nil, http.StatusInternalServerError, errors.Wrap(err, "failed to fetch schemes from database")
+	}
+	schemeListView := views.SchemeListViewFrom(schemes)
+
+	data, err := json.EncodeView(schemeListView)
+	if err != nil {
+		return nil, http.StatusInternalServerError, errors.Wrap(err, fmt.Sprintf(handlers.ErrEncodeView, listHandlerName))
+	}
+
+	return data, http.StatusOK, nil
 }

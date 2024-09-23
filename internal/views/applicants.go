@@ -26,7 +26,7 @@ type ApplicantViews struct {
 	Household []RelativeView `json:"household"`
 }
 
-func ApplicantListViewFrom(applicant models.Applicant, household []models.Household) ApplicantViews {
+func ApplicantViewFrom(applicant models.Applicant, household []models.Household) ApplicantViews {
 	return ApplicantViews{
 		PersonView: PersonView{
 			ID:               applicant.Person.ID.String(),

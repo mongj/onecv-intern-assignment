@@ -33,18 +33,17 @@ CREATE TABLE schemes (
 );
 
 CREATE TABLE scheme_benefits (
-  id SERIAL PRIMARY KEY,
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   scheme_id UUID NOT NULL,
-  benefit_type SMALLINT NOT NULL,
-  benefit_value VARCHAR(255) NOT NULL,
-  benefit_description TEXT,
+  description TEXT,
+  amount DECIMAL(12,2) NOT NULL,
   FOREIGN KEY (scheme_id) REFERENCES schemes(id)
 );
 
 CREATE TABLE scheme_criteria (
   id SERIAL PRIMARY KEY,
   scheme_id UUID NOT NULL,
-  criteria_type SMALLINT NOT NULL,
+  criteria_key SMALLINT NOT NULL,
   criteria_value VARCHAR(255) NOT NULL,
   FOREIGN KEY (scheme_id) REFERENCES schemes(id)
 );
