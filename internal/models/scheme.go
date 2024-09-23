@@ -31,6 +31,57 @@ type SchemeCriteria struct {
 	CriteriaValue string `gorm:"not null"`
 }
 
+// isEligible checks if a person is eligible for a scheme based on the scheme's criteria
+func (s *Scheme) isEligible(db *gorm.DB, id uuid.UUID) (bool, error) {
+	sc := s.Criteria
+	var p Person
+	if err := db.Model(&Person{}).First(&p, id).Error; err != nil {
+		return false, err
+	}
+
+	for _, c := range sc {
+		switch c.CriteriaKey {
+		case schemecriteria.EmploymentStatus:
+			if p.EmploymentStatus != enums.EmploymentStatus(c.CriteriaValue) {
+				return false, nil
+			}
+		case schemecriteria.MaritalStatus:
+			if p.MaritalStatus != enums.MaritalStatus(c.CriteriaValue) {
+				return false, nil
+			}
+		case schemecriteria.HasChildren:
+			var cnt int64
+			err := db.
+				Model(&Household{}).
+				Where("person_id = ? AND relation = ?", id, enums.RelationChild).
+				Count(&cnt).
+				Error;
+			if err != nil {
+				return false, err
+			}
+			if c.CriteriaValue == "true" && cnt == 0 || c.CriteriaValue == "false" && cnt > 0 {
+				return false, nil
+			}
+		case schemecriteria.ChildrenSchoolLevel:
+			var cnt int64
+			err := db.
+				Model(&Household{}).
+				Joins("JOIN people ON households.relative_id = people.id").
+				Where("households.person_id = ? AND households.relation = ?", id, enums.RelationChild).
+				Where("people.current_school_level = ?", enums.SchoolLevel(c.CriteriaValue)).
+				Count(&cnt).
+				Error;
+			if err != nil {
+				return false, err
+			}
+			if cnt == 0 {
+				return false, nil
+			}
+		}
+	}
+	return true, nil
+}
+
 // ReadScheme returns a scheme from the database given by the ID
 func ReadScheme(db *gorm.DB, id uuid.UUID) (*Scheme, error) {
 	var s *Scheme

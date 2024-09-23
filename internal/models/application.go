@@ -21,9 +21,9 @@ func (a *Application) Create(db *gorm.DB) error {
 	return db.Create(&a).Error
 }
 
-func (a *Application) BeforeCreate(tx *gorm.DB) error {
+func (a *Application) BeforeCreate(db *gorm.DB) error {
 	// Check that applicant id exists and is valid
-	applicant, err := ReadApplicant(tx, a.ApplicantID)
+	applicant, err := ReadApplicant(db, a.ApplicantID)
 	if applicant == nil {
 		return fmt.Errorf("applicant with ID %s does not exist", a.ApplicantID)
 	}
@@ -32,7 +32,7 @@ func (a *Application) BeforeCreate(tx *gorm.DB) error {
 	}
 
 	// Check that the scheme ID exists and is valid
-	scheme, err := ReadScheme(tx, a.SchemeID)
+	scheme, err := ReadScheme(db, a.SchemeID)
 	if scheme == nil {
 		return fmt.Errorf("scheme with ID %s does not exist", a.SchemeID)
 	}
@@ -40,9 +40,18 @@ func (a *Application) BeforeCreate(tx *gorm.DB) error {
 		return err
 	}
 
+	// Check that the applicant is eligible for the scheme
+	ok, err := scheme.isEligible(db, a.ApplicantID)
+	if err != nil {
+		return err
+	}
+	if !ok {
+		return fmt.Errorf("applicant with ID %s is not eligible for scheme with ID %s", a.ApplicantID, a.SchemeID)
+	}
+
 	// Check that the applicant does not have another pending application for the same scheme
 	var count int64
-	if err := tx.Model(&Application{}).
+	if err := db.Model(&Application{}).
 		Where("applicant_id = ? AND scheme_id = ? AND application_status = ?", a.ApplicantID, a.SchemeID, enums.ApplicationStatusPending).
 		Count(&count).Error; err != nil {
 		return err
