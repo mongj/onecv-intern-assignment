@@ -24,7 +24,7 @@ func ListEligibleSchemes(db *gorm.DB, id uuid.UUID) ([]models.Scheme, error) {
 	hadChldQuery := db.
 		Table("households h").
 		Select("1").
-		Where(fmt.Sprintf("h.person_id = a.person_id AND h.relation = '%s'", enums.CHILD))
+		Where(fmt.Sprintf("h.person_id = a.person_id AND h.relation = '%s'", enums.RelationChild))
 
 	chldSchLvlQuery := db.
 		Table("people r").
@@ -35,7 +35,7 @@ func ListEligibleSchemes(db *gorm.DB, id uuid.UUID) ([]models.Scheme, error) {
 	applicantInfoQuery := db.
 		Table("applicants a").
 		Select(
-			"p.*, EXISTS(?) AS has_children, (?) AS children_school_levels", 
+			"p.*, EXISTS(?) AS has_children, (?) AS children_school_levels",
 			hadChldQuery, chldSchLvlQuery,
 		).
 		Joins("JOIN people p ON a.person_id = p.id").
@@ -78,7 +78,7 @@ func ListEligibleSchemes(db *gorm.DB, id uuid.UUID) ([]models.Scheme, error) {
 		Preload("Criteria").
 		Joins("JOIN (?) AS es ON schemes.id = es.scheme_id", eligibleSchemeIDsQuery).
 		Find(&schemes).
-		Error;
+		Error
 	if err != nil {
 		return nil, err
 	}

@@ -5,35 +5,42 @@ type EmploymentStatus string
 type MaritalStatus string
 type Relation string
 type SchoolLevel string
+type ApplicationStatus string
 
 const (
-	MALE   Sex = "male"
-	FEMALE Sex = "female"
+	SexMale   Sex = "male"
+	SexFemale Sex = "female"
 )
 
 const (
-	EMPLOYED   EmploymentStatus = "employed"
-	UNEMPLOYED EmploymentStatus = "unemployed"
+	EmploymentStatusEmployed   EmploymentStatus = "employed"
+	EmploymentStatusUnemployed EmploymentStatus = "unemployed"
 )
 
 const (
-	SINGLE   MaritalStatus = "single"
-	MARRIED  MaritalStatus = "married"
-	WIDOWED  MaritalStatus = "widowed"
-	DIVORCED MaritalStatus = "divorced"
+	MaritalStatusSingle   MaritalStatus = "single"
+	MaritalStatusMarried  MaritalStatus = "married"
+	MaritalStatusWidowed  MaritalStatus = "widowed"
+	MaritalStatusDivorced MaritalStatus = "divorced"
 )
 
 const (
-	PARENT  Relation = "parent"
-	CHILD   Relation = "child"
-	SIBLING Relation = "sibling"
-	SPOUSE  Relation = "spouse"
-	OTHER   Relation = "other"
+	RelationParent  Relation = "parent"
+	RelationChild   Relation = "child"
+	RelationSibling Relation = "sibling"
+	RelationSpouse  Relation = "spouse"
+	RelationOther   Relation = "other"
 )
 
 const (
-	PRESCHOOL     SchoolLevel = "preschool"
-	PRIMARY       SchoolLevel = "primary"
-	SECONDARY     SchoolLevel = "secondary"
-	POSTSECONDARY SchoolLevel = "post-secondary"
+	SchoolLevelPreschool     SchoolLevel = "preschool"
+	SchoolLevelPrimary       SchoolLevel = "primary"
+	SchoolLevelSecondary     SchoolLevel = "secondary"
+	SchoolLevelPostsecondary SchoolLevel = "post-secondary"
+)
+
+const (
+	ApplicationStatusPending  ApplicationStatus = "pending"
+	ApplicationStatusApproved ApplicationStatus = "approved"
+	ApplicationStatusRejected ApplicationStatus = "rejected"
 )
