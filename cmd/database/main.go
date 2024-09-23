@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"log"
+	"os"
 
 	"github.com/mongj/gds-onecv-swe-assignment/internal/config"
 	"github.com/mongj/gds-onecv-swe-assignment/internal/database"
@@ -13,8 +14,8 @@ import (
 func main() {
 	flag.Parse()
 	switch flag.Arg(0) {
-	// case "seedDB":
-	// 	seedMainDB()
+	case "seedDB":
+		seedDB()
 	case "migrateDB":
 		migrateDB(migrate.Up)
 	case "rollbackDB":
@@ -22,6 +23,32 @@ func main() {
 	default:
 		_ = errors.Errorf("Unknown command: %s", flag.Arg(0))
 	}
+}
+
+// seedDB seeds the database with the seed.sql file
+func seedDB() {
+	cfg, err := config.LoadEnv()
+	if err != nil {
+		log.Fatalln(errors.Wrap(err, "error loading config"))
+	}
+
+	db, err := database.Connect(cfg)
+	if err != nil {
+		log.Fatalln(errors.Wrap(err, "error connecting to database"))
+	}
+
+	// Get seed sql file
+	seedFilePath := config.RuntimeWorkingDirectory + "/seeds/seed.sql"
+	q, err := os.ReadFile(seedFilePath)
+	if err != nil {
+		log.Fatalf("Failed to read seed file '%s': %v\n", seedFilePath, err)
+	}
+	if err := db.Exec(string(q)).Error; err != nil {
+		log.Fatalf("Failed to seed database: %v\n", err)
+	}
+
+	// Seed the database
+	log.Print("Successfully seeded database")
 }
 
 // migrateDB migrates the database in the specified direction

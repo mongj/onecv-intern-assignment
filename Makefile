@@ -8,6 +8,12 @@ MIGRATION_TOOL_PATH=./cmd/database/main.go
 
 .PHONY: run build clean lint
 
+resetDB: rollbackDB migrateDB seedDB
+
+seedDB:
+	@echo "Seeding database..."
+	@GO_ENV=development go run ${MIGRATION_TOOL_PATH} seedDB
+
 migrateDB:
 	@echo "Migrating database..."
 	@GO_ENV=development go run ${MIGRATION_TOOL_PATH} migrateDB
